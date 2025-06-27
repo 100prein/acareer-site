@@ -35,51 +35,53 @@
     <button onclick="fetchUserDetails()">Fetch Details</button>
 
     <div id="result" style="margin-top: 20px;">
-      <p><strong>Full Name:</strong> <span id="full-name">-</span></p>
-      <p><strong>Email:</strong> <span id="email">-</span></p>
-      <p><strong>Activation Code:</strong> <span id="activation-code">-</span></p>
-      <p id="error-message" style="color: red;"></p>
+      <p><strong>Full Name:</strong> <span id="full_name">-</span></p>
+        <p><strong>Email:</strong> <span id="email">-</span></p>
+        <p><strong>Activation Code:</strong> <span id="activation_code">-</span></p>
+        <p id="error-message" style="color: red;">Why is it not fetching?!</p>
     </div>
   </section>
 
   <script>
-    const supabase = supabase.createClient(
-      'https://qchkojrnfptsvmybxbst.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaGtvanJuZnB0c3ZteWJ4YnN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2ODAzNTUsImV4cCI6MjA2MzI1NjM1NX0.WKdML8l93dyl2McVFcJerJgifZK_5pdzy26rkQIWTmo'
+   const supabaseClient = window.supabase.createClient(
+    'https://qchkojrnfptsvmybxbst.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaGtvanJuZnB0c3ZteWJ4YnN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2ODAzNTUsImV4cCI6MjA2MzI1NjM1NX0.WKdML8l93dyl2McVFcJerJgifZK_5pdzy26rkQIWTmo'
     );
 
+
     async function fetchUserDetails() {
-      const email = document.getElementById('email-input').value.trim();
-      const errorEl = document.getElementById('error-message');
-      const nameEl = document.getElementById('full_name');
-      const emailEl = document.getElementById('email');
-      const codeEl = document.getElementById('activation_code');
+  const email = document.getElementById('email-input').value.trim();
+  const errorEl = document.getElementById('error-message');
+  const nameEl = document.getElementById('full_name');
+  const emailEl = document.getElementById('email');
+  const codeEl = document.getElementById('activation_code');
 
-      errorEl.textContent = '';
-      nameEl.textContent = '-';
-      emailEl.textContent = '-';
-      codeEl.textContent = '-';
+  errorEl.textContent = '';
+  nameEl.textContent = '-';
+  emailEl.textContent = '-';
+  codeEl.textContent = '-';
 
-      if (!email) {
-        errorEl.textContent = 'Please enter a valid email.';
-        return;
-      }
+  if (!email) {
+    errorEl.textContent = 'Please enter a valid email.';
+    return;
+  }
 
-      const { data, error } = await supabase
-        .from('profiles3') // Change if your table is named differently
-        .select('full_name, email, activation_code')
-        .eq('email', email)
-        .single();
+  const { data, error } = await supabaseClient
+    .from('profiles3')
+    .select('full_name, email, activation_code')
+    .eq('email', email)
+    .single();
 
-      if (error || !data) {
-        errorEl.textContent = 'No matching user found for that email.';
-        return;
-      }
+  if (error || !data) {
+    errorEl.textContent = 'No matching user found for that email.';
+    return;
+  }
 
-      nameEl.textContent = data.full_name || 'N/A';
-      emailEl.textContent = data.email || 'N/A';
-      codeEl.textContent = data.activation_code || 'N/A';
-    }
+  nameEl.textContent = data.full_name || 'N/A';
+  emailEl.textContent = data.email || 'N/A';
+  codeEl.textContent = data.activation_code || 'N/A';
+}
+
   </script>
 
   <footer>
