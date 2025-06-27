@@ -79,7 +79,9 @@
 
   nameEl.textContent = data.full_name || 'N/A';
   emailEl.textContent = data.email || 'N/A';
-  codeEl.textContent = data.activation_code || 'N/A';
+  codeEl.textContent =
+  data.activation_code?.toString().padStart(4, '0') || 'N/A';
+
 }
 
   </script>
