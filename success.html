@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="./src/images/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="./src/images/favicon.svg" />
+  <link rel="shortcut icon" href="./src/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./src/images/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="aCareer" />
+  <link rel="manifest" href="./src/images/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>aCareer - Transaction Successful</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="./src/images/logo.png" alt="aCareer Logo" class="logo" />
+      <h1>aCareer</h1>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="contact.html">Contact Me</a>
+      <a href="app.html">Download now</a>
+      <a href="privacypolicy.html">Privacy Policy</a>
+    </nav>
+  </header>
+
+  <section class="contact-form">
+    <h2>Transaction Successful!</h2>
+    <p><strong>Full Name:</strong> <span id="full-name">Loading...</span></p>
+    <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+    <p><strong>Activation Code:</strong> <span id="activation-code">Loading...</span></p>
+  </section>
+
+  <script>
+    const supabase = supabase.createClient(
+      'https://qchkojrnfptsvmybxbst.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaGtvanJuZnB0c3ZteWJ4YnN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2ODAzNTUsImV4cCI6MjA2MzI1NjM1NX0.WKdML8l93dyl2McVFcJerJgifZK_5pdzy26rkQIWTmo'
+    );
+
+    async function fetchUserProfile() {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        console.error("No session found", sessionError);
+        document.getElementById("full-name").textContent = "Not logged in";
+        document.getElementById("email").textContent = "-";
+        document.getElementById("activation-code").textContent = "-";
+        return;
+      }
+
+      const userId = sessionData.session.user.id;
+
+      const { data, error } = await supabase
+        .from('profiles3') // <-- replace with your correct table name if needed
+        .select('full_name, email, activation_code')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        document.getElementById("full-name").textContent = "Error";
+        document.getElementById("email").textContent = "Error";
+        document.getElementById("activation-code").textContent = "Error";
+      } else {
+        document.getElementById("full-name").textContent = data.full_name || "N/A";
+        document.getElementById("email").textContent = data.email || "N/A";
+        document.getElementById("activation-code").textContent = data.activation_code || "N/A";
+      }
+    }
+
+    // Ensure the session is loaded from the URL (if redirected from auth)
+    supabase.auth.getSessionFromUrl({ storeSession: true }).finally(fetchUserProfile);
+  </script>
+
+  <footer>
+    <p>Built with 💼 by people who believe in your potential.</p>
+    <p>&copy; 2025 aCareer. All rights reserved.</p>
+  </footer>
+</body>
+</html>
