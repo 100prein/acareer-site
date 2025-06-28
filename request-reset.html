@@ -33,26 +33,46 @@
     <button onclick="requestPasswordReset()">Send Reset Link</button>
     <div class="message" id="message"></div>
   </section>
-  <script>
-    const supabase = supabase.createClient(
-      'https://qchkojrnfptsvmybxbst.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaGtvanJuZnB0c3ZteWJ4YnN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2ODAzNTUsImV4cCI6MjA2MzI1NjM1NX0.WKdML8l93dyl2McVFcJerJgifZK_5pdzy26rkQIWTmo'
-    );
+ <script type="module">
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-    async function requestPasswordReset() {
-      const email = document.getElementById('email').value;
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://acareer.vercel.app/reset-password.html'
-      });
+  const supabase = createClient(
+    'https://qchkojrnfptsvmybxbst.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjaGtvanJuZnB0c3ZteWJ4YnN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2ODAzNTUsImV4cCI6MjA2MzI1NjM1NX0.WKdML8l93dyl2McVFcJerJgifZK_5pdzy26rkQIWTmo' // replace this
+  );
 
-      const message = document.getElementById('message');
-      if (error) {
-        message.textContent = '❌ ' + error.message;
-      } else {
-        message.textContent = '✅ Password reset email sent! Check your inbox.';
-      }
+  async function checkRecoverySession() {
+    const { data, error } = await supabase.auth.getSession();
+    if (error || !data.session) {
+      document.getElementById('message').textContent = '❌ Session not found. Try the link from your email again.';
+      document.getElementById('reset-form').style.display = 'none';
     }
-  </script>
+  }
+
+  window.onload = () => {
+    checkRecoverySession();
+  };
+
+  window.resetPassword = async function () {
+    const newPassword = document.getElementById('new-password').value;
+    const message = document.getElementById('message');
+
+    if (!newPassword || newPassword.length < 6) {
+      message.textContent = '❌ Password must be at least 6 characters long.';
+      return;
+    }
+
+    const { data, error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      message.textContent = '❌ ' + error.message;
+    } else {
+      message.textContent = '✅ Password updated successfully. You can now log in with your new password.';
+      document.getElementById('reset-form').style.display = 'none';
+    }
+  }
+</script>
+
   <footer>
     <p>Built with 💼 by people who believe in your potential.</p>
     <p>&copy; 2025 aCareer. All rights reserved.</p>
