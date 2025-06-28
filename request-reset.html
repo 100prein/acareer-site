@@ -27,13 +27,19 @@
       <a href="privacypolicy.html">Privacy Policy</a>
     </nav>
   </header>
-  <section class="contact-form">
+  <!--Form-->
+  <main>
+    <section class="contact-form">
     <h2>Forgot Password?</h2>
     <input type="email" id="email" placeholder="Enter your email" />
     <button onclick="requestPasswordReset()">Send Reset Link</button>
     <div class="message" id="message"></div>
   </section>
- <script type="module">
+  </main>
+
+
+<script type="module" defer>
+
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
   const supabase = createClient(
